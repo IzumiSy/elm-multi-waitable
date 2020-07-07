@@ -6,10 +6,13 @@ module MultiWaitable exposing
 
 {-|
 
+# Wait2
 @docs Wait2, init2, wait2Update1, wait2Update2, Results2, toResults2
 
+# Wait3
 @docs Wait3, init3, wait3Update1, wait3Update2, wait3Update3, Results3, toResults3
 
+# Wait4
 @docs Wait4, init4, wait4Update1, wait4Update2, wait4Update3, wait4Update4, Results4, toResults4
 
 -}
