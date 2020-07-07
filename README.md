@@ -5,9 +5,6 @@
 
 ## Example
 ```elm
-import MultiWaitable
-
-
 -- model
 
 
@@ -17,7 +14,7 @@ type alias Model =
 
 init : Model
 init =
-    MultiWaitable.ini3 AllFinished
+    MultiWaitable.init3 AllFinished
 
 
 
