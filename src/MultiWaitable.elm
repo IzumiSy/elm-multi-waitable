@@ -17,6 +17,10 @@ module MultiWaitable exposing
 import Task
 
 
+
+-- Wait2
+
+
 {-| -}
 type Wait2 msg a b
     = Wait2 (a -> b -> msg) (Maybe a) (Maybe b)
@@ -65,6 +69,10 @@ type Results2 a b
 toResults2 : Wait2 (a -> b -> msg) a b -> Results2 a b
 toResults2 (Wait2 _ a b) =
     Results2 a b
+
+
+
+-- Wait3
 
 
 {-| -}
@@ -129,6 +137,10 @@ type Results3 a b c
 toResults3 : Wait3 msg a b c -> Results3 a b c
 toResults3 (Wait3 _ a b c) =
     Results3 a b c
+
+
+
+-- Wait4
 
 
 {-| -}
