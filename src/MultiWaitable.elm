@@ -29,6 +29,7 @@ import MultiWaitable.Internal as Internal
 
 -- Wait2
 
+
 {-| -}
 type Wait2 msg a b
     = Wait2 (Internal.Wait2 msg a b)
