@@ -1,4 +1,4 @@
-# elm-multi-waitable
+ elm-multi-waitable
 > A small package like a traffic light
 
 `MultiWaitable` module manages a state updated asynchronously.
@@ -8,13 +8,14 @@
 -- model
 
 
-type alias Model =
-    MultiWaitable.Wait3 Msg User Options Bookmarks
+type Model 
+    = Loading (MultiWaitable.Wait3 Msg User Options Bookmarks)
+    | Loaded User Options Bookmarks
 
 
 init : Model
 init =
-    MultiWaitable.init3 AllFinished
+    Loading <| MultiWaitable.init3 AllFinished
 
 
 
@@ -30,18 +31,24 @@ type Msg
 
 update : Model -> Msg -> ( Model, Cmd msg )
 update model msg =
-    case msg of
-        UserFetched user ->
-            MultiWaitable.update3Update1 user
+    case (model, msg) of
+        ( Loading waitable, UserFetched user ) ->
+            waitable
+                |> MultiWaitable.update3Update1 user
+                |> Tuple.mapFirst Loading
 
-        UserOptions options ->
-            MultiWaitable.update3Update2 options
+        ( Loading waitable, UserOptions options ) ->
+            waitable
+                |> MultiWaitable.update3Update2 options
+                |> Tuple.mapFirst Loading
 
-        BookmarksFetched bookmarks ->
-            MultiWaitable.update3Update3 bookmarks
+        ( Loading waitable, BookmarksFetched bookmarks ) ->
+            waitable
+                |> MultiWaitable.update3Update3 bookmarks
+                |> Tuple.mapFirst Loading
 
-        AllFinished user options bookmarks ->
-            -- ...
+        ( Loading _, AllFinished user options bookmarks ) ->
+            ( Loaded user options bookmarks, Cmd.none )
 ```
 
 ## Lisence
