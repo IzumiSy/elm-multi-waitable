@@ -2,7 +2,6 @@ module MultiWaitable exposing
     ( Wait2, init2, wait2Update1, wait2Update2, Results2(..), toResults2
     , Wait3, init3, wait3Update1, wait3Update2, wait3Update3, Results3(..), toResults3
     , Wait4, init4, wait4Update1, wait4Update2, wait4Update3, wait4Update4, Results4(..), toResults4
-    , wait2Update1_internal, wait2Update2_internal, wait3Update1_internal, wait3Update2_internal, wait3Update3_internal, wait4Update1_internal, wait4Update2_internal, wait4Update3_internal, wait4Update4_internal
     )
 
 {-|
@@ -24,64 +23,39 @@ module MultiWaitable exposing
 
 -}
 
-import MultiWaitable.Op exposing (Op(..), toCmd)
+import MultiWaitable.Internal as Internal
 
 
 
 -- Wait2
 
 
-{-| -}
 type Wait2 msg a b
-    = Wait2 (a -> b -> msg) (Maybe a) (Maybe b)
+    = Wait2 (Internal.Wait2 msg a b)
 
 
 {-| -}
 init2 : (a -> b -> msg) -> Wait2 msg a b
 init2 onFinished =
-    Wait2 onFinished Nothing Nothing
+    Wait2 <| Internal.Wait2 onFinished Nothing Nothing
 
 
 {-| -}
 wait2Update1 : a -> Wait2 msg a b -> ( Wait2 msg a b, Cmd msg )
-wait2Update1 a_ wait2 =
-    wait2
-        |> wait2Update1_internal a_
-        |> Tuple.mapSecond toCmd
-
-
-wait2Update1_internal : a -> Wait2 msg a b -> ( Wait2 msg a b, Op msg )
-wait2Update1_internal a_ wait2 =
-    case wait2 of
-        Wait2 _ (Just _) (Just _) ->
-            ( wait2, None )
-
-        Wait2 onFinished _ (Just b) ->
-            ( Wait2 onFinished (Just a_) (Just b), Finished (onFinished a_ b) )
-
-        Wait2 onFinished _ Nothing ->
-            ( Wait2 onFinished (Just a_) Nothing, None )
+wait2Update1 a_ (Wait2 wait) =
+    wait
+        |> Internal.wait2Update1 a_
+        |> Tuple.mapFirst Wait2
+        |> Tuple.mapSecond Internal.toCmd
 
 
 {-| -}
 wait2Update2 : b -> Wait2 msg a b -> ( Wait2 msg a b, Cmd msg )
-wait2Update2 b_ wait2 =
-    wait2
-        |> wait2Update2_internal b_
-        |> Tuple.mapSecond toCmd
-
-
-wait2Update2_internal : b -> Wait2 msg a b -> ( Wait2 msg a b, Op msg )
-wait2Update2_internal b_ wait2 =
-    case wait2 of
-        Wait2 _ (Just _) (Just _) ->
-            ( wait2, None )
-
-        Wait2 onFinished (Just a) _ ->
-            ( Wait2 onFinished (Just a) (Just b_), Finished (onFinished a b_) )
-
-        Wait2 onFinished Nothing _ ->
-            ( Wait2 onFinished Nothing (Just b_), None )
+wait2Update2 b_ (Wait2 wait) =
+    wait
+        |> Internal.wait2Update2 b_
+        |> Tuple.mapFirst Wait2
+        |> Tuple.mapSecond Internal.toCmd
 
 
 {-| -}
@@ -91,8 +65,10 @@ type Results2 a b
 
 {-| -}
 toResults2 : Wait2 (a -> b -> msg) a b -> Results2 a b
-toResults2 (Wait2 _ a b) =
-    Results2 a b
+toResults2 (Wait2 wait) =
+    case Internal.toResults2 wait of
+        Internal.Results2 a b ->
+            Results2 a b
 
 
 
@@ -101,76 +77,40 @@ toResults2 (Wait2 _ a b) =
 
 {-| -}
 type Wait3 msg a b c
-    = Wait3 (a -> b -> c -> msg) (Maybe a) (Maybe b) (Maybe c)
+    = Wait3 (Internal.Wait3 msg a b c)
 
 
 {-| -}
 init3 : (a -> b -> c -> msg) -> Wait3 msg a b c
 init3 onFinished =
-    Wait3 onFinished Nothing Nothing Nothing
+    Wait3 <| Internal.Wait3 onFinished Nothing Nothing Nothing
 
 
 {-| -}
 wait3Update1 : a -> Wait3 msg a b c -> ( Wait3 msg a b c, Cmd msg )
-wait3Update1 a_ wait3 =
-    wait3
-        |> wait3Update1_internal a_
-        |> Tuple.mapSecond toCmd
-
-
-wait3Update1_internal : a -> Wait3 msg a b c -> ( Wait3 msg a b c, Op msg )
-wait3Update1_internal a_ wait3 =
-    case wait3 of
-        Wait3 _ (Just _) (Just _) (Just _) ->
-            ( wait3, None )
-
-        Wait3 onFinished Nothing (Just b) (Just c) ->
-            ( Wait3 onFinished (Just a_) (Just b) (Just c), Finished (onFinished a_ b c) )
-
-        Wait3 onFinished _ b c ->
-            ( Wait3 onFinished (Just a_) b c, None )
+wait3Update1 a_ (Wait3 wait) =
+    wait
+        |> Internal.wait3Update1 a_
+        |> Tuple.mapFirst Wait3
+        |> Tuple.mapSecond Internal.toCmd
 
 
 {-| -}
 wait3Update2 : b -> Wait3 msg a b c -> ( Wait3 msg a b c, Cmd msg )
-wait3Update2 b_ wait3 =
-    wait3
-        |> wait3Update2_internal b_
-        |> Tuple.mapSecond toCmd
-
-
-wait3Update2_internal : b -> Wait3 msg a b c -> ( Wait3 msg a b c, Op msg )
-wait3Update2_internal b_ wait3 =
-    case wait3 of
-        Wait3 _ (Just _) (Just _) (Just _) ->
-            ( wait3, None )
-
-        Wait3 onFinished (Just a) Nothing (Just c) ->
-            ( Wait3 onFinished (Just a) (Just b_) (Just c), Finished (onFinished a b_ c) )
-
-        Wait3 onFinished a _ c ->
-            ( Wait3 onFinished a (Just b_) c, None )
+wait3Update2 b_ (Wait3 wait) =
+    wait
+        |> Internal.wait3Update2 b_
+        |> Tuple.mapFirst Wait3
+        |> Tuple.mapSecond Internal.toCmd
 
 
 {-| -}
 wait3Update3 : c -> Wait3 msg a b c -> ( Wait3 msg a b c, Cmd msg )
-wait3Update3 c_ wait3 =
-    wait3
-        |> wait3Update3_internal c_
-        |> Tuple.mapSecond toCmd
-
-
-wait3Update3_internal : c -> Wait3 msg a b c -> ( Wait3 msg a b c, Op msg )
-wait3Update3_internal c_ wait3 =
-    case wait3 of
-        Wait3 _ (Just _) (Just _) (Just _) ->
-            ( wait3, None )
-
-        Wait3 onFinished (Just a) (Just b) Nothing ->
-            ( Wait3 onFinished (Just a) (Just b) (Just c_), Finished (onFinished a b c_) )
-
-        Wait3 onFinished a b _ ->
-            ( Wait3 onFinished a b (Just c_), None )
+wait3Update3 c_ (Wait3 wait) =
+    wait
+        |> Internal.wait3Update3 c_
+        |> Tuple.mapFirst Wait3
+        |> Tuple.mapSecond Internal.toCmd
 
 
 {-| -}
@@ -180,8 +120,10 @@ type Results3 a b c
 
 {-| -}
 toResults3 : Wait3 msg a b c -> Results3 a b c
-toResults3 (Wait3 _ a b c) =
-    Results3 a b c
+toResults3 (Wait3 wait) =
+    case Internal.toResults3 wait of
+        Internal.Results3 a b c ->
+            Results3 a b c
 
 
 
@@ -190,97 +132,49 @@ toResults3 (Wait3 _ a b c) =
 
 {-| -}
 type Wait4 msg a b c d
-    = Wait4 (a -> b -> c -> d -> msg) (Maybe a) (Maybe b) (Maybe c) (Maybe d)
+    = Wait4 (Internal.Wait4 msg a b c d)
 
 
 {-| -}
 init4 : (a -> b -> c -> d -> msg) -> Wait4 msg a b c d
 init4 onFinished =
-    Wait4 onFinished Nothing Nothing Nothing Nothing
+    Wait4 <| Internal.Wait4 onFinished Nothing Nothing Nothing Nothing
 
 
 {-| -}
 wait4Update1 : a -> Wait4 msg a b c d -> ( Wait4 msg a b c d, Cmd msg )
-wait4Update1 a_ wait4 =
-    wait4
-        |> wait4Update1_internal a_
-        |> Tuple.mapSecond toCmd
-
-
-wait4Update1_internal : a -> Wait4 msg a b c d -> ( Wait4 msg a b c d, Op msg )
-wait4Update1_internal a_ wait4 =
-    case wait4 of
-        Wait4 _ (Just _) (Just _) (Just _) (Just _) ->
-            ( wait4, None )
-
-        Wait4 onFinished Nothing (Just b) (Just c) (Just d) ->
-            ( Wait4 onFinished (Just a_) (Just b) (Just c) (Just d), Finished (onFinished a_ b c d) )
-
-        Wait4 onFinished _ b c d ->
-            ( Wait4 onFinished (Just a_) b c d, None )
+wait4Update1 a_ (Wait4 wait) =
+    wait
+        |> Internal.wait4Update1 a_
+        |> Tuple.mapFirst Wait4
+        |> Tuple.mapSecond Internal.toCmd
 
 
 {-| -}
 wait4Update2 : b -> Wait4 msg a b c d -> ( Wait4 msg a b c d, Cmd msg )
-wait4Update2 b_ wait4 =
-    wait4
-        |> wait4Update2_internal b_
-        |> Tuple.mapSecond toCmd
-
-
-wait4Update2_internal : b -> Wait4 msg a b c d -> ( Wait4 msg a b c d, Op msg )
-wait4Update2_internal b_ wait4 =
-    case wait4 of
-        Wait4 _ (Just _) (Just _) (Just _) (Just _) ->
-            ( wait4, None )
-
-        Wait4 onFinished (Just a) Nothing (Just c) (Just d) ->
-            ( Wait4 onFinished (Just a) (Just b_) (Just c) (Just d), Finished (onFinished a b_ c d) )
-
-        Wait4 onFinished a _ c d ->
-            ( Wait4 onFinished a (Just b_) c d, None )
+wait4Update2 b_ (Wait4 wait) =
+    wait
+        |> Internal.wait4Update2 b_
+        |> Tuple.mapFirst Wait4
+        |> Tuple.mapSecond Internal.toCmd
 
 
 {-| -}
 wait4Update3 : c -> Wait4 msg a b c d -> ( Wait4 msg a b c d, Cmd msg )
-wait4Update3 c_ wait4 =
-    wait4
-        |> wait4Update3_internal c_
-        |> Tuple.mapSecond toCmd
-
-
-wait4Update3_internal : c -> Wait4 msg a b c d -> ( Wait4 msg a b c d, Op msg )
-wait4Update3_internal c_ wait4 =
-    case wait4 of
-        Wait4 _ (Just _) (Just _) (Just _) (Just _) ->
-            ( wait4, None )
-
-        Wait4 onFinished (Just a) (Just b) Nothing (Just d) ->
-            ( Wait4 onFinished (Just a) (Just b) (Just c_) (Just d), Finished (onFinished a b c_ d) )
-
-        Wait4 onFinished a b _ d ->
-            ( Wait4 onFinished a b (Just c_) d, None )
+wait4Update3 c_ (Wait4 wait) =
+    wait
+        |> Internal.wait4Update3 c_
+        |> Tuple.mapFirst Wait4
+        |> Tuple.mapSecond Internal.toCmd
 
 
 {-| -}
 wait4Update4 : d -> Wait4 msg a b c d -> ( Wait4 msg a b c d, Cmd msg )
-wait4Update4 d_ wait4 =
-    wait4
-        |> wait4Update4_internal d_
-        |> Tuple.mapSecond toCmd
-
-
-wait4Update4_internal : d -> Wait4 msg a b c d -> ( Wait4 msg a b c d, Op msg )
-wait4Update4_internal d_ wait4 =
-    case wait4 of
-        Wait4 _ (Just _) (Just _) (Just _) (Just _) ->
-            ( wait4, None )
-
-        Wait4 onFinished (Just a) (Just b) (Just c) Nothing ->
-            ( Wait4 onFinished (Just a) (Just b) (Just c) (Just d_), Finished (onFinished a b c d_) )
-
-        Wait4 onFinished a b c _ ->
-            ( Wait4 onFinished a b c (Just d_), None )
+wait4Update4 d_ (Wait4 wait) =
+    wait
+        |> Internal.wait4Update4 d_
+        |> Tuple.mapFirst Wait4
+        |> Tuple.mapSecond Internal.toCmd
 
 
 {-| -}
@@ -290,5 +184,7 @@ type Results4 a b c d
 
 {-| -}
 toResults4 : Wait4 msg a b c d -> Results4 a b c d
-toResults4 (Wait4 _ a b c d) =
-    Results4 a b c d
+toResults4 (Wait4 wait) =
+    case Internal.toResults4 wait of
+        Internal.Results4 a b c d ->
+            Results4 a b c d

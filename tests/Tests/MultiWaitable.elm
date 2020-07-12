@@ -1,7 +1,7 @@
 module Tests.MultiWaitable exposing (suite)
 
 import Expect
-import MultiWaitable
+import MultiWaitable.Internal as Internal
 import Test exposing (Test, describe, test)
 
 
@@ -29,17 +29,17 @@ type Msg
 
 suite : Test
 suite =
-    describe "MultiWaitable"
+    describe "MultiWaitable.Internal"
         [ test "Wait2" <|
             \_ ->
-                MultiWaitable.init2 Wait2Done
-                    |> MultiWaitable.wait2Update1_internal DoneA
+                Internal.Wait2 Wait2Done Nothing Nothing
+                    |> Internal.wait2Update1 DoneA
                     |> Tuple.first
-                    |> MultiWaitable.wait2Update2_internal DoneB
+                    |> Internal.wait2Update2 DoneB
                     |> Tuple.second
                     |> (\op ->
                             case op of
-                                MultiWaitable.Finished _ ->
+                                Internal.Finished _ ->
                                     True
 
                                 _ ->
@@ -48,16 +48,16 @@ suite =
                     |> Expect.true "Expected Op to be Finished"
         , test "Wait3" <|
             \_ ->
-                MultiWaitable.init3 Wait3Done
-                    |> MultiWaitable.wait3Update1_internal DoneA
+                Internal.Wait3 Wait3Done Nothing Nothing Nothing
+                    |> Internal.wait3Update1 DoneA
                     |> Tuple.first
-                    |> MultiWaitable.wait3Update2_internal DoneB
+                    |> Internal.wait3Update2 DoneB
                     |> Tuple.first
-                    |> MultiWaitable.wait3Update3_internal DoneC
+                    |> Internal.wait3Update3 DoneC
                     |> Tuple.second
                     |> (\op ->
                             case op of
-                                MultiWaitable.Finished _ ->
+                                Internal.Finished _ ->
                                     True
 
                                 _ ->
@@ -66,18 +66,18 @@ suite =
                     |> Expect.true "Expected Op to be Finished"
         , test "Wait4" <|
             \_ ->
-                MultiWaitable.init4 Wait4Done
-                    |> MultiWaitable.wait4Update1_internal DoneA
+                Internal.Wait4 Wait4Done Nothing Nothing Nothing Nothing
+                    |> Internal.wait4Update1 DoneA
                     |> Tuple.first
-                    |> MultiWaitable.wait4Update2_internal DoneB
+                    |> Internal.wait4Update2 DoneB
                     |> Tuple.first
-                    |> MultiWaitable.wait4Update3_internal DoneC
+                    |> Internal.wait4Update3 DoneC
                     |> Tuple.first
-                    |> MultiWaitable.wait4Update4_internal DoneD
+                    |> Internal.wait4Update4 DoneD
                     |> Tuple.second
                     |> (\op ->
                             case op of
-                                MultiWaitable.Finished _ ->
+                                Internal.Finished _ ->
                                     True
 
                                 _ ->
