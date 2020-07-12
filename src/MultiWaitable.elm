@@ -2,6 +2,7 @@ module MultiWaitable exposing
     ( Wait2, init2, wait2Update1, wait2Update2, Results2(..), toResults2
     , Wait3, init3, wait3Update1, wait3Update2, wait3Update3, Results3(..), toResults3
     , Wait4, init4, wait4Update1, wait4Update2, wait4Update3, wait4Update4, Results4(..), toResults4
+    , Wait5, init5, wait5Update1, wait5Update2, wait5Update3, wait5Update4, wait5Update5, Results5, toResults5
     )
 
 {-|
@@ -20,6 +21,11 @@ module MultiWaitable exposing
 # Wait4
 
 @docs Wait4, init4, wait4Update1, wait4Update2, wait4Update3, wait4Update4, Results4, toResults4
+
+
+# Wait5
+
+@docs Wait5, init5, wait5Update1, wait5Update2, wait5Update3, wait5Update4, wait5Update5, Results5, toResults5
 
 -}
 
@@ -189,3 +195,76 @@ toResults4 (Wait4 wait) =
     case Internal.toResults4 wait of
         Internal.Results4 a b c d ->
             Results4 a b c d
+
+
+
+-- Wait5
+
+
+{-| -}
+type Wait5 msg a b c d e
+    = Wait5 (Internal.Wait5 msg a b c d e)
+
+
+{-| -}
+init5 : (a -> b -> c -> d -> e -> msg) -> Wait5 msg a b c d e
+init5 onFinished =
+    Wait5 <| Internal.Wait5 onFinished Nothing Nothing Nothing Nothing Nothing
+
+
+{-| -}
+wait5Update1 : a -> Wait5 msg a b c d e -> ( Wait5 msg a b c d e, Cmd msg )
+wait5Update1 a_ (Wait5 wait) =
+    wait
+        |> Internal.wait5Update1 a_
+        |> Tuple.mapFirst Wait5
+        |> Tuple.mapSecond Internal.toCmd
+
+
+{-| -}
+wait5Update2 : b -> Wait5 msg a b c d e -> ( Wait5 msg a b c d e, Cmd msg )
+wait5Update2 b_ (Wait5 wait) =
+    wait
+        |> Internal.wait5Update2 b_
+        |> Tuple.mapFirst Wait5
+        |> Tuple.mapSecond Internal.toCmd
+
+
+{-| -}
+wait5Update3 : c -> Wait5 msg a b c d e -> ( Wait5 msg a b c d e, Cmd msg )
+wait5Update3 c_ (Wait5 wait) =
+    wait
+        |> Internal.wait5Update3 c_
+        |> Tuple.mapFirst Wait5
+        |> Tuple.mapSecond Internal.toCmd
+
+
+{-| -}
+wait5Update4 : d -> Wait5 msg a b c d e -> ( Wait5 msg a b c d e, Cmd msg )
+wait5Update4 d_ (Wait5 wait) =
+    wait
+        |> Internal.wait5Update4 d_
+        |> Tuple.mapFirst Wait5
+        |> Tuple.mapSecond Internal.toCmd
+
+
+{-| -}
+wait5Update5 : e -> Wait5 msg a b c d e -> ( Wait5 msg a b c d e, Cmd msg )
+wait5Update5 e_ (Wait5 wait) =
+    wait
+        |> Internal.wait5Update5 e_
+        |> Tuple.mapFirst Wait5
+        |> Tuple.mapSecond Internal.toCmd
+
+
+{-| -}
+type Results5 a b c d e
+    = Results5 (Maybe a) (Maybe b) (Maybe c) (Maybe d) (Maybe e)
+
+
+{-| -}
+toResults5 : Wait5 msg a b c d e -> Results5 a b c d e
+toResults5 (Wait5 wait) =
+    case Internal.toResults5 wait of
+        Internal.Results5 a b c d e ->
+            Results5 a b c d e

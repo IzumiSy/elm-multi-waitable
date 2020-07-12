@@ -21,10 +21,15 @@ type D
     = DoneD
 
 
+type E
+    = DoneE
+
+
 type Msg
     = Wait2Done A B
     | Wait3Done A B C
     | Wait4Done A B C D
+    | Wait5Done A B C D E
 
 
 suite : Test
@@ -74,6 +79,28 @@ suite =
                     |> Internal.wait4Update3 DoneC
                     |> Tuple.first
                     |> Internal.wait4Update4 DoneD
+                    |> Tuple.second
+                    |> (\op ->
+                            case op of
+                                Internal.Finished _ ->
+                                    True
+
+                                _ ->
+                                    False
+                       )
+                    |> Expect.true "Expected Op to be Finished"
+        , test "Wait5" <|
+            \_ ->
+                Internal.Wait5 Wait5Done Nothing Nothing Nothing Nothing Nothing
+                    |> Internal.wait5Update1 DoneA
+                    |> Tuple.first
+                    |> Internal.wait5Update2 DoneB
+                    |> Tuple.first
+                    |> Internal.wait5Update3 DoneC
+                    |> Tuple.first
+                    |> Internal.wait5Update4 DoneD
+                    |> Tuple.first
+                    |> Internal.wait5Update5 DoneE
                     |> Tuple.second
                     |> (\op ->
                             case op of

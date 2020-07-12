@@ -3,13 +3,16 @@ module MultiWaitable.Internal exposing
     , Results2(..)
     , Results3(..)
     , Results4(..)
+    , Results5(..)
     , Wait2(..)
     , Wait3(..)
     , Wait4(..)
+    , Wait5(..)
     , toCmd
     , toResults2
     , toResults3
     , toResults4
+    , toResults5
     , wait2Update1
     , wait2Update2
     , wait3Update1
@@ -19,6 +22,11 @@ module MultiWaitable.Internal exposing
     , wait4Update2
     , wait4Update3
     , wait4Update4
+    , wait5Update1
+    , wait5Update2
+    , wait5Update3
+    , wait5Update4
+    , wait5Update5
     )
 
 import Task
@@ -190,6 +198,88 @@ type Results4 a b c d
 toResults4 : Wait4 msg a b c d -> Results4 a b c d
 toResults4 (Wait4 _ a b c d) =
     Results4 a b c d
+
+
+
+-- Wait5
+
+
+type Wait5 msg a b c d e
+    = Wait5 (a -> b -> c -> d -> e -> msg) (Maybe a) (Maybe b) (Maybe c) (Maybe d) (Maybe e)
+
+
+wait5Update1 : a -> Wait5 msg a b c d e -> ( Wait5 msg a b c d e, Op msg )
+wait5Update1 a_ wait5 =
+    case wait5 of
+        Wait5 _ (Just _) (Just _) (Just _) (Just _) (Just _) ->
+            ( wait5, None )
+
+        Wait5 onFinished Nothing (Just b) (Just c) (Just d) (Just e) ->
+            ( Wait5 onFinished (Just a_) (Just b) (Just c) (Just d) (Just e), Finished (onFinished a_ b c d e) )
+
+        Wait5 onFinished _ b c d e ->
+            ( Wait5 onFinished (Just a_) b c d e, None )
+
+
+wait5Update2 : b -> Wait5 msg a b c d e -> ( Wait5 msg a b c d e, Op msg )
+wait5Update2 b_ wait5 =
+    case wait5 of
+        Wait5 _ (Just _) (Just _) (Just _) (Just _) (Just _) ->
+            ( wait5, None )
+
+        Wait5 onFinished (Just a) Nothing (Just c) (Just d) (Just e) ->
+            ( Wait5 onFinished (Just a) (Just b_) (Just c) (Just d) (Just e), Finished (onFinished a b_ c d e) )
+
+        Wait5 onFinished a _ c d e ->
+            ( Wait5 onFinished a (Just b_) c d e, None )
+
+
+wait5Update3 : c -> Wait5 msg a b c d e -> ( Wait5 msg a b c d e, Op msg )
+wait5Update3 c_ wait5 =
+    case wait5 of
+        Wait5 _ (Just _) (Just _) (Just _) (Just _) (Just _) ->
+            ( wait5, None )
+
+        Wait5 onFinished (Just a) (Just b) Nothing (Just d) (Just e) ->
+            ( Wait5 onFinished (Just a) (Just b) (Just c_) (Just d) (Just e), Finished (onFinished a b c_ d e) )
+
+        Wait5 onFinished a b _ d e ->
+            ( Wait5 onFinished a b (Just c_) d e, None )
+
+
+wait5Update4 : d -> Wait5 msg a b c d e -> ( Wait5 msg a b c d e, Op msg )
+wait5Update4 d_ wait5 =
+    case wait5 of
+        Wait5 _ (Just _) (Just _) (Just _) (Just _) (Just _) ->
+            ( wait5, None )
+
+        Wait5 onFinished (Just a) (Just b) (Just c) Nothing (Just e) ->
+            ( Wait5 onFinished (Just a) (Just b) (Just c) (Just d_) (Just e), Finished (onFinished a b c d_ e) )
+
+        Wait5 onFinished a b c _ e ->
+            ( Wait5 onFinished a b c (Just d_) e, None )
+
+
+wait5Update5 : e -> Wait5 msg a b c d e -> ( Wait5 msg a b c d e, Op msg )
+wait5Update5 e_ wait5 =
+    case wait5 of
+        Wait5 _ (Just _) (Just _) (Just _) (Just _) (Just _) ->
+            ( wait5, None )
+
+        Wait5 onFinished (Just a) (Just b) (Just c) (Just d) Nothing ->
+            ( Wait5 onFinished (Just a) (Just b) (Just c) (Just d) (Just e_), Finished (onFinished a b c d e_) )
+
+        Wait5 onFinished a b c d _ ->
+            ( Wait5 onFinished a b c d (Just e_), None )
+
+
+type Results5 a b c d e
+    = Results5 (Maybe a) (Maybe b) (Maybe c) (Maybe d) (Maybe e)
+
+
+toResults5 : Wait5 msg a b c d e -> Results5 a b c d e
+toResults5 (Wait5 _ a b c d e) =
+    Results5 a b c d e
 
 
 
