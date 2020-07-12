@@ -1,6 +1,8 @@
 {
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "test": "elm-test"
+  },
   "devDepdencies": {},
   "devDependencies": {
     "elm": "^0.19.1-3",
