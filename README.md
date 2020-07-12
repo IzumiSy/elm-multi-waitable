@@ -1,4 +1,5 @@
- elm-multi-waitable
+# elm-multi-waitable
+[![CircleCI](https://circleci.com/gh/IzumiSy/elm-multi-waitable.svg?style=svg)](https://circleci.com/gh/IzumiSy/elm-multi-waitable)
 > A small package like a traffic light
 
 `MultiWaitable` module manages a state updated asynchronously.
