@@ -2,7 +2,7 @@ module MultiWaitable exposing
     ( Wait2, init2, wait2Update1, wait2Update2, Results2(..), toResults2
     , Wait3, init3, wait3Update1, wait3Update2, wait3Update3, Results3(..), toResults3
     , Wait4, init4, wait4Update1, wait4Update2, wait4Update3, wait4Update4, Results4(..), toResults4
-    , wait2Update1_internal, wait2Update2_internal, wait3Update1_internal, wait3Update2_internal, wait3Update3_internal, wait4Update1_internal, wait4Update2_internal, wait4Update3_internal, wait4Update4_internal, Op(..)
+    , wait2Update1_internal, wait2Update2_internal, wait3Update1_internal, wait3Update2_internal, wait3Update3_internal, wait4Update1_internal, wait4Update2_internal, wait4Update3_internal, wait4Update4_internal
     )
 
 {-|
@@ -24,7 +24,7 @@ module MultiWaitable exposing
 
 -}
 
-import Task
+import MultiWaitable.Op exposing (Op(..), toCmd)
 
 
 
@@ -292,26 +292,3 @@ type Results4 a b c d
 toResults4 : Wait4 msg a b c d -> Results4 a b c d
 toResults4 (Wait4 _ a b c d) =
     Results4 a b c d
-
-
-
--- internals
-
-
-{-| Op type is like a wrapper for Elm's Cmd which is not testable.
-All internal functions above use Op instead of Cmd in order to achieve testablity.
-Exposed funstions use `toCmd` below which finally interprets Op into Cmd as a final piece.
--}
-type Op msg
-    = None
-    | Finished msg
-
-
-toCmd : Op msg -> Cmd msg
-toCmd op =
-    case op of
-        None ->
-            Cmd.none
-
-        Finished msg ->
-            Task.perform identity <| Task.succeed msg
