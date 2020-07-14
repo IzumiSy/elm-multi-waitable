@@ -3,7 +3,7 @@
     "name": "IzumiSy/elm-multi-waitable",
     "summary": "A small package like a traffic light",
     "license": "MIT",
-    "version": "1.1.0",
+    "version": "1.1.2",
     "exposed-modules": [
         "MultiWaitable"
     ],
