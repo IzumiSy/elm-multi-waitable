@@ -4,6 +4,9 @@
 
 `MultiWaitable` module manages a state updated asynchronously.
 
+## Motivation
+[Loading state design revisited in Elm](https://dev.to/izumisy/loading-state-design-revisited-in-elm-4f9a) describes why this package was born.
+
 ## Example
 ```elm
 -- model
