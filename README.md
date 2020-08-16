@@ -24,7 +24,7 @@ init =
 
 
 type Msg
-    = AllFinished
+    = AllFinished User Options Bookmarks
     | UserFetched User
     | OptionsFetched Options
     | BookmarksFetched Bookmarks
@@ -35,17 +35,17 @@ update model msg =
     case (model, msg) of
         ( Loading waitable, UserFetched user ) ->
             waitable
-                |> MultiWaitable.update3Update1 user
+                |> MultiWaitable.wait3Update1 user
                 |> Tuple.mapFirst Loading
 
         ( Loading waitable, UserOptions options ) ->
             waitable
-                |> MultiWaitable.update3Update2 options
+                |> MultiWaitable.wait3Update2 options
                 |> Tuple.mapFirst Loading
 
         ( Loading waitable, BookmarksFetched bookmarks ) ->
             waitable
-                |> MultiWaitable.update3Update3 bookmarks
+                |> MultiWaitable.wait3Update3 bookmarks
                 |> Tuple.mapFirst Loading
 
         ( Loading _, AllFinished user options bookmarks ) ->
