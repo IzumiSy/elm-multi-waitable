@@ -41,7 +41,7 @@ update model msg =
                 |> MultiWaitable.wait3Update1 user
                 |> Tuple.mapFirst Loading
 
-        ( Loading waitable, UserOptions options ) ->
+        ( Loading waitable, OptionsFetched options ) ->
             waitable
                 |> MultiWaitable.wait3Update2 options
                 |> Tuple.mapFirst Loading
