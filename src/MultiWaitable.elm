@@ -71,7 +71,7 @@ type Results2 a b
 
 
 {-| -}
-toResults2 : Wait2 (a -> b -> msg) a b -> Results2 a b
+toResults2 : Wait2 msg a b -> Results2 a b
 toResults2 (Wait2 wait) =
     case Internal.toResults2 wait of
         Internal.Results2 a b ->

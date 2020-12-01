@@ -70,7 +70,7 @@ type Results2 a b
     = Results2 (Maybe a) (Maybe b)
 
 
-toResults2 : Wait2 (a -> b -> msg) a b -> Results2 a b
+toResults2 : Wait2 msg a b -> Results2 a b
 toResults2 (Wait2 _ a b) =
     Results2 a b
 
